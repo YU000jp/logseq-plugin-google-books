@@ -1,47 +1,61 @@
 # Logseq Plugin: Google-Books
 
-- GoogleブックスAPIを利用して、書籍データをインポートする
-
+[English](https://github.com/YU000jp/logseq-plugin-google-books) | [日本語](https://github.com/YU000jp/logseq-plugin-google-books/blob/master/README.ja.md)
 
 [![latest release version](https://img.shields.io/github/v/release/YU000jp/logseq-plugin-google-books)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
 [![License](https://img.shields.io/github/license/YU000jp/logseq-plugin-google-books?color=blue)](https://github.com/YU000jp/logseq-plugin-google-books/blob/main/LICENSE)
 [![Downloads](https://img.shields.io/github/downloads/YU000jp/logseq-plugin-google-books/total.svg)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
 
-### 概要
+### Overview
 
-- [Google ブックス](https://books.google.com/)のデータベースを検索し、Logseqに書籍のページを作成するためのプラグインです。
-> 利用にあたってGoogleアカウントは一切不要です
+- This is a plugin that searches the database of [Google Books](https://books.google.com/) and creates book pages in Logseq.
+> No Google account is required for use.
 
-## はじめに
+## Getting Started
 
-### マーケットプレースからインストール
+### Install from Marketplace
 
-1. 右上ツールバーの[---]を押し、[プラグイン]を開きます。
-1. マーケットプレースを選択してください。
-1. 検索欄に`Google`と入力し、検索結果から選び、インストールしてください。
+1. Click on the [---] in the upper right toolbar and open [Plugins].
+1. Select Marketplace.
+1. Type `Google` in the search bar, choose from the search results, and install.
 
-### 使い方
+   ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/95d3bf4e-59ef-4de8-b7ec-2741ef42768e)
 
-1. 右上ツールバーにある`G`ボタンを押して、キーワード入力画面を開いてください。
-1. 検索結果がでたら、左側の選択ボタンを押すと、書籍ページの作成が開始されます。
-1. プラグインがGoogle Books APIから書籍情報を取得し、ページを作成します。
+### Usage
 
-### 読書メモをとる方法
+1. Press the `G` button in the upper right toolbar to open the keyword input screen.
 
-- パターン1-> ジャーナルなどのページから、リンクやタグ(`#[[本/タイトル]]`)をつけて、入れ子にする
-- パターン2-> 書籍のページに直接書く (日付リンクをつければ、1ページ内で、後からいつ書いたのかが分かるので便利)
-- パターン3-> 書籍のページにサブページを作成し、そのページに書く (サブページの例：`本/タイトル/感想`)
+   ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/95cabefd-ef37-4a26-9ae7-c0d877a287f7)
 
-## 備考
+   ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/75cbf770-b18d-4325-9c8c-07624d8372d7)
+1. Once the search results appear, press the selection button on the left to start creating a book page.
 
-### プラグインによって作成されるページ
+   ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/52041143-0fec-4155-9b6d-28de6cacff41)
+1. The plugin retrieves book information from the Google Books API and creates a page.
 
-1. `Reading`という、まとめページが作成されます。クエリーがデフォルトで設置されています。
-1. 各書籍のページ (`本/タイトル`もしくは`電子書籍/タイトル`のような形式)
+   ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/8d9db0aa-a2d7-453b-a771-138c2b261196)
 
-### データベースの情報について
+### Taking Reading Notes
 
-- [Google ブックス](https://books.google.com/)が提供するAPIを利用し、そのデータベースから書籍情報を取得しています。発売日などの項目は確定情報とは異なる場合があります
+- Pattern 1 -> Add links or tags (`#[[Books/Title]]`) from pages like journals and nest them.
+- Pattern 2 -> Write directly on the book page (adding a date link makes it convenient to know when it was written later within the same page).
+- Pattern 3 -> Create subpages on the book page and write on those pages (examples of subpages: `Books/Title/Impressions`)
+
+## Notes
+
+### Pages Created by the Plugin
+
+1. A summary page named `Reading` will be created with a default query.
+1. Pages for each book (`Books/Title` or `Ebooks/Title` format).
+
+### About Book Cover Images
+
+1. The plugin retrieves and saves those images to the `assets/storages/google-books/` folder.
+   > It's also possible to turn off saving in the plugin settings.
+
+### About Database Information
+
+- Book information is retrieved from the database using the API provided by [Google Books](https://books.google.com/). Items like release dates may differ from confirmed information.
 
 ## Credit / Prior arts
 
