@@ -1,19 +1,15 @@
 import '@logseq/libs' //https://plugins-doc.logseq.com/
+import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin.user'
 import { getDateForPage } from 'logseq-dateutils' //https://github.com/hkgnp/logseq-dateutils
 import { setup as l10nSetup, t } from "logseq-l10n" //https://github.com/sethyuan/logseq-l10n
 import Swal from 'sweetalert2' //https://sweetalert2.github.io/
 import { logseq as PL } from "../package.json"
-import { closeModal, openModal, RecodeDateToPage, setCloseButton, setMainUIapp } from './lib'
-import { convertSalesDateRakuten } from './rakuten'
-import en from "./translations/en.json"
-import { SettingSchemaDesc } from '@logseq/libs/dist/LSPlugin.user'
-import { createReadingPage } from './lib'
+import { closeModal, createReadingPage, openModal, RecodeDateToPage, setCloseButton, setMainUIapp } from './lib'
 import { checkAssets } from './toAssets'
+import en from "./translations/en.json"
 const pluginId = PL.id //set plugin id from package.json
 
-//楽天ブックス書籍検索API https://webservice.rakuten.co.jp/documentation/books-book-search
-//楽天Kobo電子書籍検索API https://webservice.rakuten.co.jp/documentation/kobo-ebook-search
-//(テストフォーム) https://webservice.rakuten.co.jp/explorer/api/BooksTotal/Search
+// Google Books API https://developers.google.com/books/docs/v1/using?hl=ja
 
 //参考リンク
 //<dialog>: ダイアログ要素 https://developer.mozilla.org/ja/docs/Web/HTML/Element/dialog
@@ -43,7 +39,7 @@ const main = async () => {
   //open_toolbar
   logseq.App.registerUIItem('toolbar', {
     key: pluginId,
-    template: `<div><a class="button icon" data-on-click="OpenToolbarRakuten" style="font-size: 19px; color: #bf0000; background-color: #eba9a9; border-radius: 0.4em; ">R</a></div>`,
+    template: `<div><a class="button icon" data-on-click="OpenToolbarGoogle" style="font-size: 19px; color: #437D35; background-color: #A5FE8F; border-radius: 0.4em; ">G</a></div>`,
   })
 
 }/* end_main */
@@ -51,15 +47,11 @@ const main = async () => {
 
 /* on click open_toolbar */
 const model = {
-  async OpenToolbarRakuten() {
+  async OpenToolbarGoogle() {
     let appHtml: string = `
     <dialog id="appDialog">
-      <h1>${t("楽天ブックスAPI 書籍検索")}</h1>
+      <h1>${t("GoogleブックスAPI 書籍検索")}</h1>
       <main>
-      <select id="selectKobo">
-        <option value="Kobo">${t("電子書籍 (楽天Kobo)")}</option>
-        <option value="Books" selected="true">${t("本 (楽天ブックス)")}</option>
-      </select>
         <form id="searchTitle">
           ${t("タイトルで検索")}
           <input type="text" placeholder="${t("キーワードを入力")}" required/><input type="submit"/>
@@ -97,23 +89,22 @@ const model = {
 const createTable = (data) => {
   let tableInner: string = ""
   for (const item of data) {
-    const imgTag: string = (item.Item.mediumImageUrl) ?
-      `<img src="${item.Item.mediumImageUrl}"/>`
+    const imgTag: string = (item.volumeInfo.imageLinks.thumbnail) ?
+      `<img src="${item.volumeInfo.imageLinks.thumbnail}"/>`
       : ""
-    const truncatedTitle = item.Item.title.slice(0, 60)
-    item.Item.salesDate = convertSalesDateRakuten(item.Item.salesDate)
+    const truncatedTitle = item.volumeInfo.title.slice(0, 60)
     tableInner += `<tr>
-      <td><input type="radio" name="selected" value="${item.Item.title}"></td>
+      <td><input type="radio" name="selected" value="${item.volumeInfo.title}"></td>
       <td class="ItemImg">${imgTag}</td>
-      <td class="ItemTitle"><a href="${item.Item.affiliateUrl}" target="_blank">${truncatedTitle}</a></td>
-      <td>${item.Item.author}</td>
-      <td>${item.Item.publisherName}</td>
-      <td>${item.Item.salesDate}</td>
+      <td class="ItemTitle"><a href="${item.volumeInfo.infoLink}" target="_blank">${truncatedTitle}</a></td>
+      <td>${item.volumeInfo.authors ? item.volumeInfo.authors : ""}</td>
+      <td>${item.volumeInfo.publisher ? item.volumeInfo.publisher : ""}</td>
+      <td>${item.volumeInfo.publishedDate ? item.volumeInfo.publishedDate : ""}</td>
     </tr>`
   }
   return (`
 <h2>${t("検索結果")}</h2>
-<p>${t("左側の〇をクリックすると、Logseqにページが作成されます。<small>(タイトルをクリックすると、楽天ブックスもしくは楽天Koboの商品ページが開きます)</small>")}</p>
+<p>${t("左側の〇をクリックすると、Logseqにページが作成されます。<small>(タイトルをクリックすると、Googleブックスの商品ページが開きます)</small>")}</p>
 <table id="createTable">
 <thead>
 <tr><th style="background-color:orange">${t("選択ボタン")}</th><th>${t("書影カバー")}</th><th>${t("タイトル")}</th><th>${t("著者")}</th><th>${t("出版社")}</th><th>${t("出版日")}<small>${t("(推定)")}</small></th></tr>
@@ -121,11 +112,6 @@ const createTable = (data) => {
 <tbody>
 `+ tableInner + "</tbody></table>\n")
 }
-
-
-const apiKey = "1032240167590752216"
-const affiliateId = "30c0276b.32e8a4ed.30c0276c.b21dc4e8"
-const APIelements = "title,author,publisherName,mediumImageUrl,largeImageUrl,salesDate,itemCaption,affiliateUrl"
 
 
 const formSubmitEvent = (form: HTMLFormElement) => {
@@ -136,24 +122,17 @@ const formSubmitEvent = (form: HTMLFormElement) => {
     const inputValue = input.value.trim()
     if (inputValue.length === 0) return
 
-
-    const selectKobo = document.getElementById("selectKobo") as HTMLSelectElement
-
-    let apiUrl = ((selectKobo
-      && selectKobo.value === "Kobo") ?
-      "https://app.rakuten.co.jp/services/api/Kobo/EbookSearch/20170426?" //Kobo
-      : "https://app.rakuten.co.jp/services/api/BooksBook/Search/20170404?" //Books
-    ) + `format=json&applicationId=${apiKey}&affiliateId=${affiliateId}&elements=${APIelements}`
+    let apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" //Google Books API
 
     switch (form.id) {
       case 'searchTitle':
-        apiUrl += `&title=${inputValue}`
+        apiUrl += `intitle:${inputValue}`
         break
       case 'searchISBN':
-        apiUrl += `&isbn=${inputValue}`
+        apiUrl += `isbn:${inputValue}`
         break
       case 'searchAuthor':
-        apiUrl += `&author=${inputValue}`
+        apiUrl += `inauthor:${inputValue}`
         break
       default:
         break
@@ -162,17 +141,18 @@ const formSubmitEvent = (form: HTMLFormElement) => {
     fetch(apiUrl)
       .then((response) => response.json())
       .then((data) => {
+        console.log(data) //TODO:
         const output = document.getElementById('outputFromAPI')
         if (output
-          && data.Items) {
-          const Table = createTable(data.Items)
+          && data.items) {
+          const Table = createTable(data.items)
           output.innerHTML = Table
 
           // ラジオボタンが選択された場合の処理
           const radioButtons = document.querySelectorAll('input[name="selected"]')
           if (radioButtons)
             for (const radio of radioButtons)
-              choiceRadioButton(radio, selectKobo, closeModal, openModal, data)
+              choiceRadioButton(radio, closeModal, openModal, data)
         } else
           logseq.UI.showMsg(t("検索結果が見つかりませんでした"), "warning")
       })
@@ -183,16 +163,13 @@ const formSubmitEvent = (form: HTMLFormElement) => {
 }
 
 
-const choiceRadioButton = (radio: Element, selectKobo: HTMLSelectElement, closeModal: () => void, openModal: () => void, data: any) => {
+const choiceRadioButton = (radio: Element, closeModal: () => void, openModal: () => void, data: any) => {
   radio.addEventListener('change', async (event) => {
 
     event.preventDefault()
     if (!(event.target instanceof HTMLInputElement)) return
     const selectedTitle = event.target.value
-    const FullTitle = (selectKobo
-      && selectKobo.value === "Kobo") ?
-      t("電子書籍") + "/" + selectedTitle
-      : t("本") + "/" + selectedTitle
+    const FullTitle = t("本") + "/" + selectedTitle
 
     closeModal()
 
@@ -217,21 +194,21 @@ const createBookPage = (FullTitle: string, data: any, selectedTitle: string, ope
       //"Reading"ページの作成
       await createReadingPage()
       //ページを追加する処理
-      const selectedBook = data.Items.find((item) => item.Item.title === selectedTitle)?.Item // 選択された書籍の情報を取得
+      const selectedBook = data.items.find((item) => item.volumeInfo.title === selectedTitle) // 選択された書籍の情報を取得
       if (selectedBook) {
         const { preferredDateFormat } = await logseq.App.getUserConfigs() as { preferredDateFormat: string }
-        const getDate = getDateForPage(new Date(selectedBook.salesDate), preferredDateFormat)
+        const getDate = getDateForPage(new Date(selectedBook.volumeInfo.publishedDate), preferredDateFormat)
 
         let itemProperties = {}
-        if (selectedBook.author)
-          itemProperties["author"] = selectedBook.author
-        if (selectedBook.publisherName)
-          itemProperties["publisher"] = selectedBook.publisherName
-        if (selectedBook.largeImageUrl) {
+        if (selectedBook.volumeInfo.authors !== "undefined")
+          itemProperties["author"] = selectedBook.volumeInfo.authors
+        if (selectedBook.volumeInfo.publisher !== "undefined")
+          itemProperties["publisher"] = selectedBook.volumeInfo.publisher
+        if (selectedBook.volumeInfo.imageLinks.thumbnail !== "undefined") {
           if (logseq.settings!.saveImage === true)
-            await checkAssets(selectedBook.largeImageUrl, itemProperties)//画像をアセットに保存する場合
+            await checkAssets(selectedBook.volumeInfo.imageLinks.thumbnail, selectedBook.volumeInfo.title, itemProperties)//画像をアセットに保存する場合
           else
-            itemProperties["cover"] = selectedBook.largeImageUrl //画像をアセットに保存しない場合
+            itemProperties["cover"] = selectedBook.volumeInfo.imageLinks.thumbnail //画像をアセットに保存しない場合
         }
 
         if (getDate
@@ -250,16 +227,19 @@ const createBookPage = (FullTitle: string, data: any, selectedTitle: string, ope
         if (createPage) {
           try {
             await logseq.Editor.prependBlockInPage(createPage.uuid,
-              (selectedBook.itemCaption) ?
-                `
-(${t("内容紹介「BOOK」データベースより")}) | [${t("楽天サイトへ")}](${selectedBook.affiliateUrl})
-#+BEGIN_QUOTE\n${selectedBook.itemCaption}
+              `
+[${t("Google Booksサイトへ")}](${selectedBook.volumeInfo.infoLink})
+`)
+            if (selectedBook.volumeInfo.description) {
+              // 「#」が含まれる場合エスケープする
+              let desc:string = selectedBook.volumeInfo.description
+              desc = desc.replaceAll("#","# ")
+              await logseq.Editor.prependBlockInPage(createPage.uuid, `
+#+BEGIN_QUOTE
+${desc}
 #+END_QUOTE
-                    `
-                : `
-[${t("楽天サイトへ")}](${selectedBook.affiliateUrl})
-`
-            )
+            `)
+            }
             await Swal.fire(t("ページが作成されました。"), `[[${FullTitle}]]`, 'success').then(async (ok) => {
               if (ok) {
                 //日付とリンクを先頭行にいれる
@@ -277,7 +257,8 @@ const createBookPage = (FullTitle: string, data: any, selectedTitle: string, ope
             }
           }
         }
-      }
+      } else
+        logseq.UI.showMsg(t("作成に失敗しました"))
     } else
       await userCancel(openModal) //作成キャンセルボタン
   })
