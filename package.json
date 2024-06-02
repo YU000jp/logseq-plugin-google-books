@@ -4,7 +4,7 @@
   "author": "YU000jp",
   "logseq": {
     "id": "google-books",
-    "title": "Google Books Importer",
+    "title": "Google Books",
     "icon": "./icon.svg"
   },
   "main": "dist/index.html",
