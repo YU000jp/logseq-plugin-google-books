@@ -43,7 +43,8 @@
 
 - [Google ブックス](https://books.google.com/)が提供するAPIを利用し、そのデータベースから書籍情報を取得しています。発売日などの項目は確定情報とは異なる場合があります
 
-## Credit
+## Credit / Prior arts
 
+- Logseq Plugin-> [@LuloDev/logseq-book-fetch](https://github.com/LuloDev/logseq-book-fetch)
 - [Google Books API](https://developers.google.com/books/docs/v1/using)
-- [icooon-mono.com](https://icooon-mono.com/11122-%e3%81%88%e3%82%93%e3%81%b4%e3%81%a4%e4%bb%98%e3%81%8d%e3%81%ae%e3%83%8e%e3%83%bc%e3%83%88%e3%82%a2%e3%82%a4%e3%82%b3%e3%83%b3/)
+- Icon-> [icooon-mono.com](https://icooon-mono.com/11122-%e3%81%88%e3%82%93%e3%81%b4%e3%81%a4%e4%bb%98%e3%81%8d%e3%81%ae%e3%83%8e%e3%83%bc%e3%83%88%e3%82%a2%e3%82%a4%e3%82%b3%e3%83%b3/)
