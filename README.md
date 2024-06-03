@@ -31,7 +31,7 @@
 1. Once the search results appear, press the selection button on the left to start creating a book page.
 
    ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/52041143-0fec-4155-9b6d-28de6cacff41)
-1. The plugin retrieves book information from the Google Books API and creates a page.
+1. The plugin retrieves book information from Google Books API and creates a page.
 
    ![image](https://github.com/YU000jp/logseq-plugin-google-books/assets/111847207/8d9db0aa-a2d7-453b-a771-138c2b261196)
 
@@ -43,7 +43,7 @@
 
 ## Notes
 
-### Pages Created by the Plugin
+### Pages Created by Plugin
 
 1. A summary page named `Reading` will be created with a default query.
 1. Pages for each book (`Books/Title` or `Ebooks/Title` format).
