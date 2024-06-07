@@ -31,7 +31,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
       && getDate !== "NaN/aN/aN")
       itemProperties["sales"] = getDate
 
-    itemProperties["tags"] = ["Reading"]
+    //itemProperties["tags"] = ["Reading"]
     const createPage = await logseq.Editor.createPage(
       FullTitle,
       itemProperties,
@@ -39,7 +39,12 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
         redirect: true,
         createFirstBlock: true
       }) as PageEntity
+
     if (createPage) {
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      await updatePagePropertiesArray(createPage.uuid)
+      await new Promise((resolve) => setTimeout(resolve, 100))
+
       await logseq.Editor.prependBlockInPage(createPage.uuid,
         `
     [${t("Google Booksサイトへ")}](${selectedBook.volumeInfo.infoLink})
@@ -64,18 +69,22 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
         if (ok)
           logseq.hideMainUI()
       })
-      await updatePagePropertiesArray(FullTitle)
+
     }
   }
   else
     logseq.UI.showMsg(t("作成に失敗しました"))
 }
 
-const updatePagePropertiesArray = async (pageName: string) => {
-  const blocks = await logseq.Editor.getPageBlocksTree(pageName) as { uuid: BlockEntity["uuid"] }[]
+const updatePagePropertiesArray = async (pageUuid: PageEntity["uuid"]) => {
+  const blocks = await logseq.Editor.getPageBlocksTree(pageUuid) as { uuid: BlockEntity["uuid"] }[]
   if (blocks && blocks[0])
     await logseq.Editor.editBlock(blocks[0].uuid).then(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 200))
-      logseq.Editor.insertAtEditingCursor(",") //ページプロパティを配列として読み込ませる処理
+      await new Promise((resolve) => setTimeout(resolve, 100))
+      // ページのプロパティを更新
+      logseq.Editor.insertAtEditingCursor(`
+      tags:: [[Reading]],
+      `) // アナログで追加
+      await new Promise((resolve) => setTimeout(resolve, 100))
     })
 }

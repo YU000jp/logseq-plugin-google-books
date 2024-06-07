@@ -82,7 +82,7 @@ const createTable = (data) => {
 
 
 const formSubmitEvent = (form: HTMLFormElement) => {
-  form.addEventListener('submit', (event) => {
+  form.addEventListener('submit', async(event) => {
     event.preventDefault()
 
     if (form.id === "inputISBN") {
@@ -99,7 +99,7 @@ const formSubmitEvent = (form: HTMLFormElement) => {
       logseq.showMainUI()
       for (let i = 0; i < isbnCodesFiltered.length; i++) {
         console.log("ISBN code: "+isbnCodesFiltered[i])
-        fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbnCodesFiltered[i]}`)
+        await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbnCodesFiltered[i]}`)
           .then((response) => response.json())
           .then(async (data) => {
             if (data.items) {
@@ -118,6 +118,7 @@ const formSubmitEvent = (form: HTMLFormElement) => {
           .catch((error) => {
             console.error(error)
           })
+        await new Promise((resolve) => setTimeout(resolve, 2000)) //2秒待機
       }
 
     } else {
@@ -131,7 +132,7 @@ const formSubmitEvent = (form: HTMLFormElement) => {
 
       switch (form.id) {
         case 'searchTitle':
-          apiUrl += `${inputValue}`
+          apiUrl += `intitle:${inputValue}`
           break
         case 'searchISBN':
           apiUrl += `isbn:${inputValue}`
