@@ -26,7 +26,7 @@ export function setCloseButton() {
   }
 }
 
-export function setMainUIapp(appHtml: string) {
+export function setMainUIApp(appHtml: string) {
   const MainUIapp = document.getElementById("app") as HTMLDivElement
   if (MainUIapp) {
     MainUIapp.innerHTML = appHtml
