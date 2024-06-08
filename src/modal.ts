@@ -61,7 +61,7 @@ export const model = {
 export const createTable = (data) => {
   let tableInner: string = ""
   for (const item of data) {
-    const imgTag: string = (item.volumeInfo.imageLinks.thumbnail) ?
+    const imgTag: string = item.volumeInfo.imageLinks?.thumbnail ?
       `<img src="${item.volumeInfo.imageLinks.thumbnail}"/>`
       : ""
     const truncatedTitle = item.volumeInfo.title.slice(0, 60)

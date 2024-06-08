@@ -14,16 +14,19 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
     const getDate = getDateForPage(new Date(selectedBook.volumeInfo.publishedDate), preferredDateFormat)
 
     let itemProperties = {}
-    if (selectedBook.volumeInfo.authors !== "undefined")
+    if (selectedBook.volumeInfo.authors !== "undefined"
+      || selectedBook.volumeInfo.authors !== "")
       itemProperties["author"] = selectedBook.volumeInfo.authors
-    if (selectedBook.volumeInfo.publisher !== "undefined")
+    if (selectedBook.volumeInfo.publisher !== "undefined"
+      || selectedBook.volumeInfo.publisher !== "")
       itemProperties["publisher"] = selectedBook.volumeInfo.publisher
-    if (selectedBook.volumeInfo.imageLinks.thumbnail !== "undefined") {
+    if (selectedBook.volumeInfo.imageLinks
+      && selectedBook.volumeInfo.imageLinks!.thumbnail !== "undefined"
+      || selectedBook.volumeInfo.imageLinks!.thumbnail !== "")
       if (logseq.settings!.saveImage === true)
         await checkAssets(selectedBook.volumeInfo.imageLinks.thumbnail, selectedBook.volumeInfo.title, itemProperties) //画像をアセットに保存する場合
       else
         itemProperties["cover"] = selectedBook.volumeInfo.imageLinks.thumbnail //画像をアセットに保存しない場合
-    }
 
     if (getDate
       && getDate !== "[[NaN/aN/aN]]"
@@ -64,7 +67,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
       //日付とリンクをReadingページの先頭行にいれる
       RecodeDateToPage(preferredDateFormat, "Reading", ` [[${FullTitle}]]`)
 
-      logseq.UI.showMsg(t("ページが作成されました。") + FullTitle, "success",{ timeout: 4200 })
+      logseq.UI.showMsg(t("ページが作成されました。") + FullTitle, "success", { timeout: 4200 })
     }
   } else {
     logseq.UI.showMsg(t("作成に失敗しました") + FullTitle, "error")
