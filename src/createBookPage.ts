@@ -8,7 +8,7 @@ import { BlockEntity, PageEntity } from "@logseq/libs/dist/LSPlugin.user"
 export const createBookPage = async (data: any, selectedTitle: string, FullTitle: string) => {
   await createReadingPage()
   //ページを追加する処理
-  const selectedBook = data.items.find((item) => item.volumeInfo.title === selectedTitle) // 選択された書籍の情報を取得
+  const selectedBook = data.items.find((item) => item.volumeInfo.title.replaceAll("/", " ") === selectedTitle) // 選択された書籍の情報を取得
   if (selectedBook) {
     const { preferredDateFormat } = await logseq.App.getUserConfigs() as { preferredDateFormat: string }
     const getDate = getDateForPage(new Date(selectedBook.volumeInfo.publishedDate), preferredDateFormat)
@@ -21,7 +21,6 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
     if (selectedBook.volumeInfo.imageLinks.thumbnail !== "undefined") {
       if (logseq.settings!.saveImage === true)
         await checkAssets(selectedBook.volumeInfo.imageLinks.thumbnail, selectedBook.volumeInfo.title, itemProperties) //画像をアセットに保存する場合
-
       else
         itemProperties["cover"] = selectedBook.volumeInfo.imageLinks.thumbnail //画像をアセットに保存しない場合
     }

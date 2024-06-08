@@ -99,7 +99,7 @@ const formSubmitEvent = (form: HTMLFormElement) => {
 
       logseq.UI.closeMsg(msg) //awaitを使っているので終わったら、メッセージが閉じる
       logseq.UI.showMsg(t("処理が終了しました。"), "success", { timeout: 3200 })
-
+      console.log(t("処理が終了しました。"))
     } else
       search(form)
   })
@@ -111,7 +111,7 @@ export const choiceRadioButton = (radio: Element, closeModal: () => void, openMo
 
     event.preventDefault()
     if (!(event.target instanceof HTMLInputElement)) return
-    const selectedTitle = event.target.value
+    const selectedTitle = event.target.value.replaceAll("/", " ")// 「/」を含むタイトルは不可。「/」を「\」に変換する
     const FullTitle = t("本") + "/" + selectedTitle
 
     closeModal()
