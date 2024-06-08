@@ -1,8 +1,10 @@
 import { t } from "logseq-l10n"
 import Swal from "sweetalert2"
 import { createBookPage } from "./createBookPage"
-import { closeModal, openModal, setCloseButton, setMainUIApp } from "./lib"
+import { setCloseButton, setMainUIApp } from "./lib"
 import { PageEntity } from "@logseq/libs/dist/LSPlugin.user"
+import { createPagesByISBN } from "./createPagesByISBN"
+import { search } from "./search"
 
 /* on click open_toolbar */
 export const model = {
@@ -53,7 +55,7 @@ export const model = {
   }
 }
 
-const createTable = (data) => {
+export const createTable = (data) => {
   let tableInner: string = ""
   for (const item of data) {
     const imgTag: string = (item.volumeInfo.imageLinks.thumbnail) ?
@@ -82,94 +84,26 @@ const createTable = (data) => {
 
 
 const formSubmitEvent = (form: HTMLFormElement) => {
-  form.addEventListener('submit', async(event) => {
+  form.addEventListener('submit', async (event) => {
     event.preventDefault()
 
     if (form.id === "inputISBN") {
 
       //ISBNコードでまとめて作成
-      logseq.UI.showMsg(t("ISBNコードでまとめて作成します"), "info")
-      const textarea = form.querySelector('textarea')
-      if (!(textarea instanceof HTMLTextAreaElement)) return
-      const isbnCodes = textarea.value.trim().split('\n')
-      if (isbnCodes.length === 0) return
-      //10桁もしくは13桁のISBNコードのみを抽出
-      const isbnCodesFiltered = isbnCodes.filter((isbn) => isbn.match(/^[0-9]{10,13}$/))
-      if (isbnCodesFiltered.length === 0) return
-      logseq.showMainUI()
-      for (let i = 0; i < isbnCodesFiltered.length; i++) {
-        console.log("ISBN code: "+isbnCodesFiltered[i])
-        await fetch(`https://www.googleapis.com/books/v1/volumes?q=isbn:${isbnCodesFiltered[i]}`)
-          .then((response) => response.json())
-          .then(async (data) => {
-            if (data.items) {
-              const selectedTitle = data.items[0].volumeInfo.title
-              const FullTitle = t("本") + "/" + selectedTitle
-              if (await logseq.Editor.getPage(FullTitle) as { uuid: PageEntity["uuid"] } | null) //ページチェック
-                console.log(t("すでにページが存在しています") + ": " + FullTitle)
-              else {
-                createBookPage(data, selectedTitle, FullTitle) //ページが存在していない場合
-                await new Promise((resolve) => setTimeout(resolve, 3300)) //3秒待機
-              }
-            } else
-              console.log(t("検索結果が見つかりませんでした") + ": " + isbnCodesFiltered[i])
-            await new Promise((resolve) => setTimeout(resolve, 500)) //0.5秒待機
-          })
-          .catch((error) => {
-            console.error(error)
-          })
-        await new Promise((resolve) => setTimeout(resolve, 2000)) //2秒待機
-      }
+      const msg = await logseq.UI.showMsg(t("実行中 (ISBNコードでまとめて作成)"), "info", { timeout: 1000 * 60 * 5 })
 
-    } else {
+      await createPagesByISBN(form)
 
-      const input = form.querySelector('input[type="text"]')
-      if (!(input instanceof HTMLInputElement)) return
-      const inputValue = input.value.trim()
-      if (inputValue.length === 0) return
+      logseq.UI.closeMsg(msg) //awaitを使っているので終わったら、メッセージが閉じる
+      logseq.UI.showMsg(t("処理が終了しました。"), "success", { timeout: 3200 })
 
-      let apiUrl = "https://www.googleapis.com/books/v1/volumes?q=" //Google Books API
-
-      switch (form.id) {
-        case 'searchTitle':
-          apiUrl += `intitle:${inputValue}`
-          break
-        case 'searchISBN':
-          apiUrl += `isbn:${inputValue}`
-          break
-        case 'searchAuthor':
-          apiUrl += `inauthor:${inputValue}`
-          break
-        default:
-          break
-      }
-
-      fetch(apiUrl)
-        .then((response) => response.json())
-        .then((data) => {
-          const output = document.getElementById('outputFromAPI')
-          if (output
-            && data.items) {
-            const Table = createTable(data.items)
-            output.innerHTML = Table
-
-            // ラジオボタンが選択された場合の処理
-            const radioButtons = document.querySelectorAll('input[name="selected"]')
-            if (radioButtons)
-              for (const radio of radioButtons)
-                choiceRadioButton(radio, closeModal, openModal, data)
-          } else
-            logseq.UI.showMsg(t("検索結果が見つかりませんでした"), "warning")
-        })
-        .catch((error) => {
-          console.error(error)
-        })
-    }
+    } else
+      search(form)
   })
 }
 
 
-const choiceRadioButton = (radio: Element, closeModal: () => void, openModal: () => void, data: any) => {
+export const choiceRadioButton = (radio: Element, closeModal: () => void, openModal: () => void, data: any) => {
   radio.addEventListener('change', async (event) => {
 
     event.preventDefault()

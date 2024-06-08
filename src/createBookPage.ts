@@ -71,9 +71,10 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
       })
 
     }
+  } else {
+    logseq.UI.showMsg(t("作成に失敗しました") + FullTitle, "error")
+    console.error("Failed to create page" + FullTitle)
   }
-  else
-    logseq.UI.showMsg(t("作成に失敗しました"))
 }
 
 const updatePagePropertiesArray = async (pageUuid: PageEntity["uuid"]) => {
