@@ -138,6 +138,7 @@ const createBookPageModal = (FullTitle: string, data: any, selectedTitle: string
       await createBookPage(data, selectedTitle, FullTitle)
     } else
       await userCancel(openModal) //作成キャンセルボタン
+    logseq.hideMainUI()
   })
 }
 
