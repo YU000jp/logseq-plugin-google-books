@@ -65,24 +65,31 @@ export const createTable = (data) => {
       `<img src="${item.volumeInfo.imageLinks.thumbnail}"/>`
       : ""
     const truncatedTitle = item.volumeInfo.title.slice(0, 60)
-    tableInner += `<tr>
-          <td><input type="radio" name="selected" value="${item.volumeInfo.title}"></td>
-          <td class="ItemImg">${imgTag}</td>
-          <td class="ItemTitle"><a href="${item.volumeInfo.infoLink}" target="_blank">${truncatedTitle}</a></td>
-          <td>${item.volumeInfo.authors ? item.volumeInfo.authors : ""}</td>
-          <td>${item.volumeInfo.publisher ? item.volumeInfo.publisher : ""}</td>
-          <td>${item.volumeInfo.publishedDate ? item.volumeInfo.publishedDate : ""}</td>
-        </tr>`
+    tableInner += `
+    <li class="item">
+      <div class="item-picture" title="${t("書影カバー")}">${imgTag}</div>
+      <div class="item-body">
+        <div class="item-title">
+          <input type="radio" name="selected" value="${item.volumeInfo.title}" title="${t("選択ボタン")}" style="background-color:orange"/>
+          <a href="${item.volumeInfo.infoLink}" target="_blank" title="${t("タイトル")}">${truncatedTitle}</a>
+        </div>
+        <div class="item-text">
+          ${item.volumeInfo.authors ? `<span title="${t("著者")}">${item.volumeInfo.authors}</span>` : ""}<br/>
+          ${item.volumeInfo.publisher ? `<span title="${t("出版社")}">${item.volumeInfo.publisher}</span>` : ""}<br/>
+          ${item.volumeInfo.publishedDate ? `<span title="${t("出版日")} ${t("(推定)")}">${item.volumeInfo.publishedDate}</span>` : ""}
+        </div>
+      </div>
+    </li>
+    `
   }
+
   return (`
     <h2>${t("検索結果")}</h2>
     <p>${t("左側の〇をクリックすると、Logseqにページが作成されます。<small>(タイトルをクリックすると、Googleブックスの商品ページが開きます)</small>")}</p>
-    <table id="createTable">
-    <thead>
-    <tr><th style="background-color:orange">${t("選択ボタン")}</th><th>${t("書影カバー")}</th><th>${t("タイトル")}</th><th>${t("著者")}</th><th>${t("出版社")}</th><th>${t("出版日")}<small>${t("(推定)")}</small></th></tr>
-    </thead>
-    <tbody>
-    `+ tableInner + "</tbody></table>\n")
+    <ul id="createTable">
+      ${tableInner}
+    </ul>
+    `)
 }
 
 
