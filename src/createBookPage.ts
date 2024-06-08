@@ -64,11 +64,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
       //日付とリンクをReadingページの先頭行にいれる
       RecodeDateToPage(preferredDateFormat, "Reading", ` [[${FullTitle}]]`)
 
-      await Swal.fire(t("ページが作成されました。"), `[[${FullTitle}]]`, 'success').then(async (ok) => {
-        if (ok)
-          logseq.hideMainUI()
-      })
-
+      logseq.UI.showMsg(t("ページが作成されました。") + FullTitle, "success",{ timeout: 4200 })
     }
   } else {
     logseq.UI.showMsg(t("作成に失敗しました") + FullTitle, "error")

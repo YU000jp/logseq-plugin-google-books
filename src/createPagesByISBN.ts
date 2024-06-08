@@ -10,7 +10,6 @@ export const createPagesByISBN = async (form: HTMLFormElement): Promise<void> =>
   //10桁もしくは13桁のISBNコードのみを抽出
   const isbnCodesFiltered = isbnCodes.filter((isbn) => isbn.match(/^[0-9]{10,13}$/))
   if (isbnCodesFiltered.length === 0) return
-  logseq.showMainUI()
 
   //すでに存在しているページをリスト化
   let existPages: string[] = []
