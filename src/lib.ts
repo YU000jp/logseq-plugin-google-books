@@ -1,4 +1,4 @@
-import { AppUserConfigs, BlockEntity } from '@logseq/libs/dist/LSPlugin.user'
+import { AppUserConfigs, BlockEntity, PageEntity } from '@logseq/libs/dist/LSPlugin.user'
 import { getDateForPage } from 'logseq-dateutils'
 import '@logseq/libs' //https://plugins-doc.logseq.com/
 
@@ -17,12 +17,33 @@ export function openModal() {
 }
 
 export function setCloseButton() {
-  const closeBtn = document.getElementById('closeBtn') as HTMLButtonElement
-  if (closeBtn) {
-    closeBtn.addEventListener('click', () => {
+  const btn = document.getElementById('closeBtn') as HTMLButtonElement
+  if (btn) {
+    btn.addEventListener('click', () => {
       closeModal()
       logseq.hideMainUI()
     })
+  }
+}
+
+export function setReadingPageButton() {
+  const btn = document.getElementById('ReadingBtn') as HTMLButtonElement
+  if (btn) {
+    btn.addEventListener('click', (ev) => {
+      closeModal()
+      logseq.hideMainUI()
+      pageOpen("Reading", ev.shiftKey)
+    })
+  }
+}
+
+export const pageOpen = async (pageName: string, shiftKey: boolean) => {
+  const page = await logseq.Editor.getPage(pageName) as { uuid: PageEntity["uuid"] } | null
+  if (page) {
+    if (shiftKey)
+      logseq.Editor.openInRightSidebar(page.uuid)
+    else
+      logseq.Editor.scrollToBlockInPage(pageName, page.uuid)
   }
 }
 

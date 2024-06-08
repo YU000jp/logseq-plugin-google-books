@@ -1,7 +1,7 @@
 import { t } from "logseq-l10n"
 import Swal from "sweetalert2"
 import { createBookPage } from "./createBookPage"
-import { setCloseButton, setMainUIApp } from "./lib"
+import { setCloseButton, setMainUIApp, setReadingPageButton } from "./lib"
 import { PageEntity } from "@logseq/libs/dist/LSPlugin.user"
 import { createPagesByISBN } from "./createPagesByISBN"
 import { search } from "./search"
@@ -28,7 +28,7 @@ export const model = {
           <output aria-live="polite" id="outputFromAPI"></output>
           </main>
           <menu>
-            <button id="closeBtn">${t("閉じる")}</button>
+            <button id="closeBtn">${t("閉じる")}</button> | <button id="ReadingBtn">Reading</button>
           </menu>
           <hr/>
           <footer>
@@ -46,6 +46,9 @@ export const model = {
 
     // 閉じるボタン
     setCloseButton()
+
+    // Readingページを開くボタン
+    setReadingPageButton()
 
     // 検索フォーム送信時の処理
     const searchForms = document.querySelectorAll('form')
