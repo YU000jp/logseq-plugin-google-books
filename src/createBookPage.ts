@@ -1,6 +1,5 @@
 import { t } from "logseq-l10n"
 import { createReadingPage, RecodeDateToPage } from "./lib"
-import Swal from "sweetalert2"
 import { checkAssets } from "./toAssets"
 import { getDateForPage } from "logseq-dateutils"
 import { BlockEntity, PageEntity } from "@logseq/libs/dist/LSPlugin.user"
