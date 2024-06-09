@@ -10,7 +10,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
   const selectedBook = data.items.find((item) => item.volumeInfo.title.replaceAll("/", " ") === selectedTitle) // 選択された書籍の情報を取得
   if (selectedBook) {
     const { preferredDateFormat } = await logseq.App.getUserConfigs() as { preferredDateFormat: string }
-    const getDate = getDateForPage(new Date(selectedBook.volumeInfo.publishedDate), preferredDateFormat)
+    const getDate = getDateForPage(new Date(selectedBook.volumeInfo.publishedDate), "yyyy/MM")
 
     let itemProperties = {}
     if (selectedBook.volumeInfo.authors !== "undefined"
@@ -28,8 +28,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
         itemProperties["cover"] = selectedBook.volumeInfo.imageLinks.thumbnail //画像をアセットに保存しない場合
 
     if (getDate
-      && getDate !== "[[NaN/aN/aN]]"
-      && getDate !== "NaN/aN/aN")
+      && getDate !== "[[NaN/aN]]")
       itemProperties["sales"] = getDate
 
     //itemProperties["tags"] = ["Reading"]
