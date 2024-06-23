@@ -1,10 +1,11 @@
 # Logseq Plugin: Google-Books
 
-[English](https://github.com/YU000jp/logseq-plugin-google-books) | [日本語](https://github.com/YU000jp/logseq-plugin-google-books/blob/master/README.ja.md)
-
-[![latest release version](https://img.shields.io/github/v/release/YU000jp/logseq-plugin-google-books)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
+<div align="right">
+   
+[English](https://github.com/YU000jp/logseq-plugin-google-books) | [日本語](https://github.com/YU000jp/logseq-plugin-google-books/blob/master/README.ja.md) [![latest release version](https://img.shields.io/github/v/release/YU000jp/logseq-plugin-google-books)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
 [![License](https://img.shields.io/github/license/YU000jp/logseq-plugin-google-books?color=blue)](https://github.com/YU000jp/logseq-plugin-google-books/blob/main/LICENSE)
-[![Downloads](https://img.shields.io/github/downloads/YU000jp/logseq-plugin-google-books/total.svg)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
+[![Downloads](https://img.shields.io/github/downloads/YU000jp/logseq-plugin-google-books/total.svg)](https://github.com/YU000jp/logseq-plugin-google-books/releases) <a href="https://www.buymeacoffee.com/yu000japan"><img src="https://img.buymeacoffee.com/button-api/?text=Buy me a pizza&emoji=🍕&slug=yu000japan&button_colour=FFDD00&font_colour=000000&font_family=Poppins&outline_colour=000000&coffee_colour=ffffff" /></a>
+</div>
 
 ### Overview
 
