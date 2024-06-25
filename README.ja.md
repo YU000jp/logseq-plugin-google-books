@@ -1,5 +1,6 @@
 # Logseq Plugin: Google-Books
 
+APIから取得した書籍情報や表紙画像をLogseqに取り込んで、読書ログをつけられたら便利だと思います。このプラグインでは、それを実現しました。
 
 <div align="right">
 
