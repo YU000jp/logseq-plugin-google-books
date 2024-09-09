@@ -2,6 +2,9 @@
 
 > It would be useful to import book information and cover images retrieved from the API into Logseq. I have made it happen.
 
+> [!WARNING]
+This plugin does not work with Logseq db version.
+
 <div align="right">
    
 [English](https://github.com/YU000jp/logseq-plugin-google-books) | [日本語](https://github.com/YU000jp/logseq-plugin-google-books/blob/master/README.ja.md) [![latest release version](https://img.shields.io/github/v/release/YU000jp/logseq-plugin-google-books)](https://github.com/YU000jp/logseq-plugin-google-books/releases)

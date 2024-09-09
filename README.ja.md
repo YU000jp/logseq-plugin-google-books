@@ -2,6 +2,9 @@
 
 APIから取得した書籍情報や表紙画像をLogseqに取り込んで、読書ログをつけられたら便利だと思います。それを実現させるために作ったプラグインです。([Rakuten Booksプラグイン](https://github.com/YU000jp/logseq-plugin-rakuten-books))
 
+> [!WARNING]
+>このプラグインはLogseq dbバージョンでは動作しません。
+
 <div align="right">
 
 [English](https://github.com/YU000jp/logseq-plugin-google-books) | [日本語](https://github.com/YU000jp/logseq-plugin-google-books/blob/master/README.ja.md) [![latest release version](https://img.shields.io/github/v/release/YU000jp/logseq-plugin-google-books)](https://github.com/YU000jp/logseq-plugin-google-books/releases)
