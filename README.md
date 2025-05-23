@@ -2,8 +2,8 @@
 
 > It would be useful to import book information and cover images retrieved from the API into Logseq. I have made it happen.
 
-> [!WARNING]
-This plugin does not work with Logseq db version.
+> [!NOTE]
+> This plugin works in Logseq db version.
 
 <div align="right">
    
