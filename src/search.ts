@@ -41,7 +41,7 @@ export const search = (form: HTMLFormElement) => {
       }
 
       else
-        logseq.UI.showMsg(t("検索結果が見つかりませんでした"), "warning")
+        logseq.UI.showMsg(t("No search results found"), "warning")
     })
     .catch((error) => {
       console.error(error)

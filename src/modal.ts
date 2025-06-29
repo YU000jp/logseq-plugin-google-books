@@ -11,30 +11,30 @@ export const model = {
   async OpenToolbarGoogle() {
     let appHtml: string = `
         <dialog id="appDialog">
-          <h1>${t("GoogleブックスAPI 書籍検索")}</h1>
+          <h1>${t("Google Books API Book Search")}</h1>
           <main>
             <form id="searchTitle">
-              ${t("タイトルで検索")}
-              <input type="text" placeholder="${t("キーワードを入力")}" required/><input type="submit"/>
+              ${t("Search by Title")}
+              <input type="text" placeholder="${t("Enter keywords")}" required/><input type="submit"/>
             </form>
             <form id="searchAuthor">
-             ${t("著者で検索")}
-              <input type="text" placeholder="${t("キーワードを入力")}" required/><input type="submit"/>
+             ${t("Search by Author")}
+              <input type="text" placeholder="${t("Enter keywords")}" required/><input type="submit"/>
             </form>
             <form id="searchISBN">
-              ${t("ISBNで検索")}
-              <input type="text" maxlength="13" placeholder="${t("10桁もしくは13桁")}" required/><input type="submit"/>
+              ${t("Search by ISBN")}
+              <input type="text" maxlength="13" placeholder="${t("10 or 13 digits")}" required/><input type="submit"/>
             </form>
           <output aria-live="polite" id="outputFromAPI"></output>
           </main>
           <menu>
-            <button id="closeBtn">${t("閉じる")}</button> | <button id="ReadingBtn">Reading</button>
+            <button id="closeBtn">${t("Close")}</button> | <button id="ReadingBtn">Reading</button>
           </menu>
           <hr/>
           <footer>
             <form id="inputISBN">
-              ${t("オプション: まとめて作成")}
-              <textarea id="inputISBN" placeholder="${t("ISBNコードを改行で区切って入力")}" required style="height: 3em; width: 13em"></textarea>
+              ${t("Option: Bulk Create")}
+              <textarea id="inputISBN" placeholder="${t("Enter ISBN codes separated by line breaks")}" required style="height: 3em; width: 13em"></textarea>
               <input type="submit"/>
             </form>
           </footer> 
@@ -67,16 +67,16 @@ export const createTable = (data) => {
     const truncatedTitle = item.volumeInfo.title.slice(0, 60)
     tableInner += `
     <li class="item">
-      <div class="item-picture" title="${t("書影カバー")}">${imgTag}</div>
+      <div class="item-picture" title="${t("Book Cover")}">${imgTag}</div>
       <div class="item-body">
         <div class="item-title">
-          <input type="radio" name="selected" value="${item.volumeInfo.title}" title="${t("選択ボタン")}" style="background-color:orange"/>
-          <a href="${item.volumeInfo.infoLink}" target="_blank" title="${t("タイトル")}">${truncatedTitle}</a>
+          <input type="radio" name="selected" value="${item.volumeInfo.title}" title="${t("Select Button")}" style="background-color:orange"/>
+          <a href="${item.volumeInfo.infoLink}" target="_blank" title="${t("Title")}">${truncatedTitle}</a>
         </div>
         <div class="item-text">
-          ${item.volumeInfo.authors ? `<span title="${t("著者")}">${item.volumeInfo.authors}</span>` : ""}<br/>
-          ${item.volumeInfo.publisher ? `<span title="${t("出版社")}">${item.volumeInfo.publisher}</span>` : ""}<br/>
-          ${item.volumeInfo.publishedDate ? `<span title="${t("出版日")} ${t("(推定)")}">${item.volumeInfo.publishedDate}</span>` : ""}
+          ${item.volumeInfo.authors ? `<span title="${t("Author")}">${item.volumeInfo.authors}</span>` : ""}<br/>
+          ${item.volumeInfo.publisher ? `<span title="${t("Publisher")}">${item.volumeInfo.publisher}</span>` : ""}<br/>
+          ${item.volumeInfo.publishedDate ? `<span title="${t("Publication Date")} ${t("(estimated)")}">${item.volumeInfo.publishedDate}</span>` : ""}
         </div>
       </div>
     </li>
@@ -84,8 +84,8 @@ export const createTable = (data) => {
   }
 
   return (`
-    <h2>${t("検索結果")}</h2>
-    <p>${t("左側の〇をクリックすると、Logseqにページが作成されます。<small>(タイトルをクリックすると、Googleブックスの商品ページが開きます)</small>")}</p>
+    <h2>${t("Search Results")}</h2>
+    <p>${t("Click the ○ on the left to create a page in Logseq. <small>(Click the title to open the Google Books product page)</small>")}</p>
     <ul id="createTable">
       ${tableInner}
     </ul>
@@ -100,13 +100,13 @@ const formSubmitEvent = (form: HTMLFormElement) => {
     if (form.id === "inputISBN") {
 
       //ISBNコードでまとめて作成
-      const msg = await logseq.UI.showMsg(t("実行中 (ISBNコードでまとめて作成)"), "info", { timeout: 1000 * 60 * 5 })
+      const msg = await logseq.UI.showMsg(t("Processing (Batch create by ISBN codes)"), "info", { timeout: 1000 * 60 * 5 })
 
       await createPagesByISBN(form)
 
       logseq.UI.closeMsg(msg) //awaitを使っているので終わったら、メッセージが閉じる
-      logseq.UI.showMsg(t("処理が終了しました。"), "success", { timeout: 3200 })
-      console.log(t("処理が終了しました。"))
+      logseq.UI.showMsg(t("Processing completed."), "success", { timeout: 3200 })
+      console.log(t("Processing completed."))
     } else
       search(form)
   })
@@ -119,7 +119,7 @@ export const choiceRadioButton = (radio: Element, closeModal: () => void, openMo
     event.preventDefault()
     if (!(event.target instanceof HTMLInputElement)) return
     const selectedTitle = event.target.value.replaceAll("/", " ")// 「/」を含むタイトルは不可。「/」を「\」に変換する
-    const FullTitle = t("本") + "/" + selectedTitle
+    const FullTitle = t("Book") + "/" + selectedTitle
 
     closeModal()
 
@@ -133,8 +133,8 @@ export const choiceRadioButton = (radio: Element, closeModal: () => void, openMo
 
 const createBookPageModal = (FullTitle: string, data: any, selectedTitle: string, openModal: () => void) => {
   Swal.fire({
-    title: t("続行しますか？"),
-    text: `${t("新しいページを作成します。")}\n\n[[${FullTitle}]]`,
+    title: t("Do you want to continue?"),
+    text: `${t("Create a new page.")}\n\n[[${FullTitle}]]`,
     icon: 'info',
     showCancelButton: true,
     confirmButtonColor: '#3085d6',
@@ -151,14 +151,14 @@ const createBookPageModal = (FullTitle: string, data: any, selectedTitle: string
 
 const createBookPageCancel = (openModal: () => void) => {
   logseq.hideMainUI()
-  logseq.UI.showMsg(t("すでにページが存在しています"), "warning")
+  logseq.UI.showMsg(t("Page already exists"), "warning")
   openModal()
   logseq.showMainUI()
 }
 
 const userCancel = async (openModal: () => void) => {
   logseq.hideMainUI()
-  await logseq.UI.showMsg(t("キャンセルしました"), "warning")
+  await logseq.UI.showMsg(t("Cancelled"), "warning")
   openModal()
   logseq.showMainUI()
 }

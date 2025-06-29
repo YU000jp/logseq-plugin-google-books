@@ -23,18 +23,18 @@ export const createPagesByISBN = async (form: HTMLFormElement): Promise<void> =>
       .then(async (data) => {
         if (data.items) {
           const selectedTitle = data.items[0].volumeInfo.title.replaceAll("/", " ")// 「/」を含むタイトルは不可。「/」を「\」に変換する
-          const FullTitle = t("本") + "/" + selectedTitle
+          const FullTitle = t("Book") + "/" + selectedTitle
           if (await logseq.Editor.getPage(FullTitle) as { uuid: PageEntity["uuid"] } | null) { //ページチェック
-            console.log(t("すでにページが存在しています") + ": " + FullTitle)
-            logseq.UI.showMsg(t("すでにページが存在しています") + ": " + FullTitle, "warning", { timeout: 2200 })
+            console.log(t("Page already exists") + ": " + FullTitle)
+            logseq.UI.showMsg(t("Page already exists") + ": " + FullTitle, "warning", { timeout: 2200 })
             existPages.push(FullTitle)
           } else {
             createBookPage(data, selectedTitle, FullTitle) //ページが存在していない場合
             await new Promise((resolve) => setTimeout(resolve, 3300)) //3秒待機
           }
         } else {
-          console.log(t("検索結果が見つかりませんでした") + ": " + isbnCodesFiltered[i])
-          logseq.UI.showMsg(t("検索結果が見つかりませんでした") + ": " + isbnCodesFiltered[i], "warning", { timeout: 2200 })
+          console.log(t("No search results found") + ": " + isbnCodesFiltered[i])
+          logseq.UI.showMsg(t("No search results found") + ": " + isbnCodesFiltered[i], "warning", { timeout: 2200 })
           notFoundPages.push(isbnCodesFiltered[i])
         }
         await new Promise((resolve) => setTimeout(resolve, 500)) //0.5秒待機
@@ -49,9 +49,9 @@ export const createPagesByISBN = async (form: HTMLFormElement): Promise<void> =>
     console.log("existPages: " + existPages)
     console.log("notFoundPages: " + notFoundPages)
     logseq.UI.showMsg(
-      t("すでに存在しているページ数") + ": " + existPages.length + "\n" +
+      t("Number of existing pages") + ": " + existPages.length + "\n" +
       existPages.join("\n") + "\n" +
-      t("検索結果が見つからなかった数") + ": " + notFoundPages.length + "\n" +
+      t("Number of pages not found") + ": " + notFoundPages.length + "\n" +
       notFoundPages.join("\n") + "\n",
       "warning", { timeout: 12000 }
     )

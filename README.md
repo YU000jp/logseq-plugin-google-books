@@ -3,7 +3,7 @@
 > It would be useful to import book information and cover images retrieved from the API into Logseq. I have made it happen.
 
 > [!WARNING]
-> This plugin works with Logseq file-based graphs.It does not work with database graphs.
+> This plugin works with Logseq file-based graphs. It does not work with database graphs.
 
 <div align="right">
    

@@ -47,7 +47,7 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
 
       await logseq.Editor.prependBlockInPage(createPage.uuid,
         `
-    [${t("Google Booksサイトへ")}](${selectedBook.volumeInfo.infoLink})
+    [${t("Go to Google Books")}](${selectedBook.volumeInfo.infoLink})
     `)
       if (selectedBook.volumeInfo.description) {
         // 「#」が含まれる場合エスケープする
@@ -65,10 +65,10 @@ export const createBookPage = async (data: any, selectedTitle: string, FullTitle
       //日付とリンクをReadingページの先頭行にいれる
       RecodeDateToPage(preferredDateFormat, "Reading", ` [[${FullTitle}]]`)
 
-      logseq.UI.showMsg(t("ページが作成されました。") + FullTitle, "success", { timeout: 4200 })
+      logseq.UI.showMsg(t("Page created: ") + FullTitle, "success", { timeout: 4200 })
     }
   } else {
-    logseq.UI.showMsg(t("作成に失敗しました") + FullTitle, "error")
+    logseq.UI.showMsg(t("Failed to create page: ") + FullTitle, "error")
     console.error("Failed to create page" + FullTitle)
   }
 }
